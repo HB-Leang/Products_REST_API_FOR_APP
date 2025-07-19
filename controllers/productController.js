@@ -3,13 +3,36 @@ import { validationResult } from "express-validator";
 const product = await import("../models/productModel.js");
 
 export const getProducts = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  
+  if(req.query.id)
+  {
+    try {
+    const id  = req.query.id;
+    const data = await product.getProductById(id);
+    
+    if (data.length === 0) {
+      return res.status(404).json({ message: "Product Not Found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Product retrieved successfully", data: data });
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to fetch product" });
+  }
+  }
+
   try {
     const data = await product.getAllProducts();
     res
       .status(200)
       .json({ message: "Products retrieved successfully", data: data });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch product" });
+    res.status(500).json({ error: "Failed to fetch products" });
   }
 };
 
@@ -21,7 +44,7 @@ export const getProduct = async (req, res) => {
 
   try {
     const { id } = req.params;
-    console.log(id);
+
     const data = await product.getProductById(id);
     
     if (data.length === 0) {
@@ -44,7 +67,6 @@ export const createProduct = async (req, res) => {
 
   try {
     const isProductCreated = await product.createProduct(req.body);
-
     if (!isProductCreated) {
       return res
         .status(400)
@@ -54,9 +76,9 @@ export const createProduct = async (req, res) => {
         });
     }
 
-    res.status(200).json({ message: "Product created successfully" });
+    res.status(201).json({ message: "Product created successfully" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch prodcuct" });
+    res.status(500).json({ error: "Failed to create prodcuct" });
   }
 };
 
@@ -67,7 +89,7 @@ export const updateProduct = async (req, res) => {
   }
 
   try {
-    const { id } = req.params;
+    const id  = req.query.id;
 
     if (!(await product.isProductExist(id))) {
       return res.status(404).json({ message: "Product Not Found" });
@@ -92,7 +114,7 @@ export const deleteProduct = async (req, res) => {
   }
 
   try {
-    const { id } = req.params;
+    const id  = req.query.id;
 
     if (!(await product.isProductExist(id))) {
       return res.status(404).json({ message: "Product Not Found" });

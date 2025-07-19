@@ -1,18 +1,16 @@
 import { Router } from "express";
-import { getProducts, getProduct, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
-import { validateProduct, validateParam } from "../validators/productValidator.js";
+import { getProducts, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
+import { validateProduct, validateQueryParam, validateQueryParamIdRequired } from "../validators/productValidator.js";
 const productRouter = Router();
 
 
-productRouter.route('/').get(getProducts);
+productRouter.route('').get([validateQueryParam], getProducts);
 
-productRouter.route('/:id').get([validateParam], getProduct);
+productRouter.route('').post([validateProduct], createProduct);
 
-productRouter.route('/').post([validateProduct], createProduct);
+productRouter.route('').put([validateQueryParamIdRequired, validateProduct], updateProduct);
 
-productRouter.route('/:id').put([validateParam, validateProduct], updateProduct);
-
-productRouter.route('/:id').delete([validateParam], deleteProduct);
+productRouter.route('').delete([validateQueryParamIdRequired], deleteProduct);
 
 
 export default productRouter;

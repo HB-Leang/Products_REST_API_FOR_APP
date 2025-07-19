@@ -56,12 +56,13 @@ export const createProduct = async (data) => {
     try {
         const result = await dbConnection
       .request()
-      .input('productName', sql.NVarChar, data.name)
-      .input('price', sql.Decimal(10, 2), data.price)
-      .input('stock', sql.Int, data.stock)
+      .input('productName', sql.NVarChar, data.PRODUCTNAME)
+      .input('price', sql.Decimal(10, 2), data.PRICE)
+      .input('stock', sql.Int, data.STOCK)
       .query(
         'INSERT INTO PRODUCTS (PRODUCTNAME, PRICE, STOCK) VALUES (@productName, @price, @stock)'
       );
+
     return result.rowsAffected[0] > 0;
     } catch (err) {
         console.log('Error creating product', err);
@@ -73,14 +74,14 @@ export const updateProduct = async (id, data) => {
     try {
         const result = await dbConnection
       .request()
-      .input('productName', sql.NVarChar, data.name)
-      .input('price', sql.Decimal(10, 2), data.price)
-      .input('stock', sql.Int, data.stock)
+      .input('productName', sql.NVarChar, data.PRODUCTNAME)
+      .input('price', sql.Decimal(10, 2), data.PRICE)
+      .input('stock', sql.Int, data.STOCK)
       .input('productId', sql.Int, id)
       .query(
         'UPDATE PRODUCTS SET PRODUCTNAME = @productName, PRICE = @price, STOCK = @stock WHERE PRODUCTID = @productId'
       );
-    console.log(result);
+
     return result.rowsAffected[0] > 0;
     } catch (err) {
         console.log(`Error updating product with ID : ${id}`, err);
