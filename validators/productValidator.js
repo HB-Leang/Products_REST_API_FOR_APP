@@ -3,6 +3,7 @@ import { body, param, query} from 'express-validator';
 export const validateProduct = [
   
   body("PRODUCTNAME")
+    .exists()
     .isString()
     .notEmpty()
     .withMessage("Name is required and must be a string")
@@ -10,9 +11,11 @@ export const validateProduct = [
     .isLength({ min: 1, max: 100 })
     .withMessage("Name must be between 1 and 100 characters"),
   body("PRICE")
+    .exists()
     .isFloat({ min: 0 })
     .withMessage("Price must be a number greater than or equal to 0"),
   body("STOCK")
+    .exists()
     .isInt({ min: 0 })
     .withMessage("Stock must be an integer greater than or equal to 0"),
 ];
